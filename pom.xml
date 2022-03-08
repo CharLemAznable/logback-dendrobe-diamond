@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.github.charlemaznable</groupId>
+        <artifactId>char-dependencies</artifactId>
+        <version>0.0.7-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>logback-dendrobe-diamond</artifactId>
+    <version>0.1.7-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>Logback Dendrobe Diamond</name>
+    <url>https://github.com/CharLemAznable/logback-dendrobe-diamond</url>
+    <description>Logback Dendrobe Hot Updater using Diamond.</description>
+
+    <scm>
+        <connection>scm:git:https://github.com/CharLemAznable/logback-dendrobe-diamond.git</connection>
+        <developerConnection>scm:git:https://github.com/CharLemAznable/logback-dendrobe-diamond.git</developerConnection>
+        <url>https://github.com/CharLemAznable/logback-dendrobe-diamond</url>
+    </scm>
+
+    <repositories>
+        <repository>
+            <id>central</id>
+            <url>https://repo1.maven.org/maven2/</url>
+            <layout>default</layout>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>sonatype</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+            <layout>default</layout>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <properties>
+        <sonar.projectKey>CharLemAznable_logback-dendrobe-diamond</sonar.projectKey>
+
+        <es-config-elves.version>0.0.7-SNAPSHOT</es-config-elves.version>
+        <logback-dendrobe.version>0.1.7-SNAPSHOT</logback-dendrobe.version>
+        <vertx-config-elves.version>0.1.7-SNAPSHOT</vertx-config-elves.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.github.charlemaznable</groupId>
+            <artifactId>es-config-elves</artifactId>
+            <version>${es-config-elves.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.charlemaznable</groupId>
+            <artifactId>logback-dendrobe</artifactId>
+            <version>${logback-dendrobe.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.charlemaznable</groupId>
+            <artifactId>vertx-config-elves</artifactId>
+            <version>${vertx-config-elves.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-hazelcast</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>elasticsearch</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>mysql</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+</project>
