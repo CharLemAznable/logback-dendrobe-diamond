@@ -54,6 +54,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.github.bingoohuang</groupId>
+            <artifactId>diamond-client</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.github.charlemaznable</groupId>
             <artifactId>es-config-elves</artifactId>
             <version>${es-config-elves.version}</version>

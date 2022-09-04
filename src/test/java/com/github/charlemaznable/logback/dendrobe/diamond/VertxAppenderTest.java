@@ -3,6 +3,7 @@ package com.github.charlemaznable.logback.dendrobe.diamond;
 import com.github.charlemaznable.core.vertx.VertxElf;
 import com.github.charlemaznable.logback.dendrobe.vertx.VertxManager;
 import com.github.charlemaznable.logback.dendrobe.vertx.VertxManagerListener;
+import com.hazelcast.config.Config;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
@@ -22,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import java.time.Duration;
 import java.util.Properties;
 
+import static com.github.charlemaznable.vertx.config.VertxClusterConfigElf.VERTX_CLUSTER_CONFIG_DIAMOND_GROUP_NAME;
 import static com.github.charlemaznable.vertx.config.VertxOptionsConfigElf.VERTX_OPTIONS_DIAMOND_GROUP_NAME;
 import static java.util.Objects.nonNull;
 import static org.awaitility.Awaitility.await;
@@ -50,7 +52,9 @@ public class VertxAppenderTest implements DiamondUpdaterListener, VertxManagerLi
                 .field("diamondAllListener").field("allListeners").call("size").<Integer>get());
         val vertxOptions = new VertxOptions();
         vertxOptions.setWorkerPoolSize(10);
-        vertxOptions.setClusterManager(new HazelcastClusterManager());
+        val hazelcastConfig = new Config();
+        hazelcastConfig.getNetworkConfig().getJoin().getMulticastConfig().setEnabled(true);
+        vertxOptions.setClusterManager(new HazelcastClusterManager(hazelcastConfig));
         vertx = VertxElf.buildVertx(vertxOptions);
         vertx.eventBus().consumer("logback.diamond",
                 (Handler<Message<JsonObject>>) event -> {
@@ -78,6 +82,12 @@ public class VertxAppenderTest implements DiamondUpdaterListener, VertxManagerLi
 
         updated = false;
         configured = false;
+        MockDiamondServer.setConfigInfo(VERTX_CLUSTER_CONFIG_DIAMOND_GROUP_NAME, "DEFAULT", "" +
+                "hazelcast:\n" +
+                "  network:\n" +
+                "    join:\n" +
+                "      multicast:\n" +
+                "        enabled: true\n");
         MockDiamondServer.setConfigInfo(VERTX_OPTIONS_DIAMOND_GROUP_NAME, "DEFAULT", "" +
                 "workerPoolSize=42\n" +
                 "clusterManager=@com.github.charlemaznable.vertx.config.DiamondHazelcastClusterManager\n");
