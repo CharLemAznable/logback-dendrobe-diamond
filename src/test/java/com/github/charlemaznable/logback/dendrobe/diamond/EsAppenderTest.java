@@ -1,17 +1,15 @@
 package com.github.charlemaznable.logback.dendrobe.diamond;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch.core.SearchRequest;
+import co.elastic.clients.elasticsearch.indices.CreateIndexRequest;
+import co.elastic.clients.elasticsearch.indices.OpenRequest;
 import com.github.charlemaznable.core.es.EsConfig;
 import com.github.charlemaznable.logback.dendrobe.es.EsClientManager;
 import com.github.charlemaznable.logback.dendrobe.es.EsClientManagerListener;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.elasticsearch.action.admin.indices.open.OpenIndexRequest;
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.client.indices.CreateIndexRequest;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -26,18 +24,17 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.Properties;
 
-import static com.github.charlemaznable.core.es.EsClientElf.buildEsClient;
-import static com.github.charlemaznable.core.es.EsClientElf.closeEsClient;
+import static com.github.charlemaznable.core.es.EsClientElf.buildElasticsearchClient;
+import static com.github.charlemaznable.core.es.EsClientElf.closeElasticsearchApiClient;
 import static com.github.charlemaznable.es.config.EsConfigElf.ES_CONFIG_DIAMOND_GROUP_NAME;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Objects.nonNull;
 import static org.awaitility.Awaitility.await;
-import static org.elasticsearch.client.RequestOptions.DEFAULT;
 import static org.joor.Reflect.on;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SuppressWarnings("deprecation")
 @Slf4j
 public class EsAppenderTest implements DiamondUpdaterListener, EsClientManagerListener {
 
@@ -55,7 +52,7 @@ public class EsAppenderTest implements DiamondUpdaterListener, EsClientManagerLi
             = new ElasticsearchContainer(ELASTICSEARCH_IMAGE)
             .withPassword(ELASTICSEARCH_PASSWORD);
 
-    private static RestHighLevelClient esClient;
+    private static ElasticsearchClient esClient;
 
     private static Logger root;
     private static Logger self;
@@ -72,13 +69,12 @@ public class EsAppenderTest implements DiamondUpdaterListener, EsClientManagerLi
         esConfig.setUris(newArrayList(elasticsearch.getHttpHostAddress()));
         esConfig.setUsername(ELASTICSEARCH_USERNAME);
         esConfig.setPassword(ELASTICSEARCH_PASSWORD);
-        esClient = buildEsClient(esConfig);
+        esClient = buildElasticsearchClient(esConfig);
 
-        val createIndexRequest = new CreateIndexRequest("logback.diamond");
-        val createIndexResponse = esClient.indices()
-                .create(createIndexRequest, DEFAULT);
-        val openIndexRequest = new OpenIndexRequest("logback.diamond");
-        val openIndexResponse = esClient.indices().open(openIndexRequest, DEFAULT);
+        val createIndexRequest = CreateIndexRequest.of(builder -> builder.index("logback.diamond"));
+        val createIndexResponse = esClient.indices().create(createIndexRequest);
+        val openIndexRequest = OpenRequest.of(builder -> builder.index("logback.diamond"));
+        val openIndexResponse = esClient.indices().open(openIndexRequest);
 
         await().forever().until(() -> nonNull(
                 DiamondSubscriber.getInstance().getDiamondRemoteChecker()));
@@ -92,7 +88,7 @@ public class EsAppenderTest implements DiamondUpdaterListener, EsClientManagerLi
 
     @AfterAll
     public static void afterAll() {
-        closeEsClient(esClient);
+        closeElasticsearchApiClient(esClient);
         elasticsearch.stop();
     }
 
@@ -130,13 +126,18 @@ public class EsAppenderTest implements DiamondUpdaterListener, EsClientManagerLi
     @SuppressWarnings({"unchecked", "SameParameterValue"})
     @SneakyThrows
     private void assertSearchContent(String content) {
-        val searchRequest = new SearchRequest("logback.diamond");
-        searchRequest.source(SearchSourceBuilder.searchSource()
-                .query(QueryBuilders.matchPhraseQuery("event.message", content)));
-        val searchResponse = esClient.search(searchRequest, DEFAULT);
-        val searchResponseHits = searchResponse.getHits();
-        assertTrue(searchResponseHits.getHits().length > 0);
-        val responseMap = searchResponseHits.getAt(0).getSourceAsMap();
+        val searchRequest = SearchRequest.of(builder ->
+                builder.index("logback.diamond").query(queryBuilder ->
+                        queryBuilder.matchPhrase(phrase ->
+                                phrase.field("event.message").query(content)
+                        )
+                )
+        );
+        val searchResponse = esClient.search(searchRequest, Map.class);
+        val searchResponseHits = searchResponse.hits().hits();
+        assertTrue(searchResponseHits.size() > 0);
+        val responseMap = searchResponseHits.get(0).source();
+        assertNotNull(responseMap);
         assertEquals(content, ((Map<String, String>) responseMap.get("event")).get("message"));
     }
 
