@@ -38,7 +38,7 @@ public final class DiamondEqlConfigService implements EqlConfigService {
     public static class DiamondEqlConfig extends EqlPropertiesConfig
             implements EqlTranFactoryCacheLifeCycle {
 
-        private String connectionName;
+        private final String connectionName;
         private DiamondListener diamondListener;
         private DiamondManager diamondManager;
 

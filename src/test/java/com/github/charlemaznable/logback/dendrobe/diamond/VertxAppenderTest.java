@@ -82,15 +82,17 @@ public class VertxAppenderTest implements DiamondUpdaterListener, VertxManagerLi
 
         updated = false;
         configured = false;
-        MockDiamondServer.setConfigInfo(VERTX_CLUSTER_CONFIG_DIAMOND_GROUP_NAME, "DEFAULT", "" +
-                "hazelcast:\n" +
-                "  network:\n" +
-                "    join:\n" +
-                "      multicast:\n" +
-                "        enabled: true\n");
-        MockDiamondServer.setConfigInfo(VERTX_OPTIONS_DIAMOND_GROUP_NAME, "DEFAULT", "" +
-                "workerPoolSize=42\n" +
-                "clusterManager=@com.github.charlemaznable.vertx.config.DiamondHazelcastClusterManager(DEFAULT)\n");
+        MockDiamondServer.setConfigInfo(VERTX_CLUSTER_CONFIG_DIAMOND_GROUP_NAME, "DEFAULT", """
+                hazelcast:
+                  network:
+                    join:
+                      multicast:
+                        enabled: true
+                """);
+        MockDiamondServer.setConfigInfo(VERTX_OPTIONS_DIAMOND_GROUP_NAME, "DEFAULT", """
+                workerPoolSize=42
+                clusterManager=@com.github.charlemaznable.vertx.config.DiamondHazelcastClusterManager(DEFAULT)
+                """);
         MockDiamondServer.updateDiamond("Logback", "test", "" +
                 "root[console.level]=info\n" +
                 CLASS_NAME + "[appenders]=[vertx]\n" +
