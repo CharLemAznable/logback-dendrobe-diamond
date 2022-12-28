@@ -44,7 +44,7 @@ public class EqlAppenderTest implements DiamondUpdaterListener {
     private static final String SELECT_SIMPLE_LOGS = "" +
             "select log_id, log_content, log_date, log_date_time from simple_log order by log_id";
     private static final DockerImageName mysqlImageName = DockerImageName.parse("mysql:5.7.34");
-    private static MySQLContainer mysql0 = new MySQLContainer<>(mysqlImageName).withDatabaseName(DB0);
+    private static final MySQLContainer<?> mysql0 = new MySQLContainer<>(mysqlImageName).withDatabaseName(DB0);
     private static Logger root;
     private static Logger self;
     private boolean updated;
@@ -142,7 +142,7 @@ public class EqlAppenderTest implements DiamondUpdaterListener {
         assertEquals("(test||)no db log null: null", queryNoDbLogNull.getLogContent());
 
         val queryNoDbLogNotLog = simpleLogs.get(3);
-        assertEquals("(test||)no db log not log: " + notLog.toString(), queryNoDbLogNotLog.getLogContent());
+        assertEquals("(test||)no db log not log: " + notLog, queryNoDbLogNotLog.getLogContent());
 
         DiamondUpdater.removeListener(this);
     }
