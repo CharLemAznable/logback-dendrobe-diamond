@@ -47,9 +47,7 @@
     <properties>
         <sonar.projectKey>CharLemAznable_logback-dendrobe-diamond</sonar.projectKey>
 
-        <es-config-elves.version>2022.0.3-SNAPSHOT</es-config-elves.version>
         <logback-dendrobe.version>2022.0.3-SNAPSHOT</logback-dendrobe.version>
-        <vertx-config-elves.version>2022.0.3-SNAPSHOT</vertx-config-elves.version>
     </properties>
 
     <dependencies>
@@ -59,18 +57,8 @@
         </dependency>
         <dependency>
             <groupId>com.github.charlemaznable</groupId>
-            <artifactId>es-config-elves</artifactId>
-            <version>${es-config-elves.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.charlemaznable</groupId>
             <artifactId>logback-dendrobe</artifactId>
             <version>${logback-dendrobe.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.charlemaznable</groupId>
-            <artifactId>vertx-config-elves</artifactId>
-            <version>${vertx-config-elves.version}</version>
         </dependency>
 
         <dependency>
