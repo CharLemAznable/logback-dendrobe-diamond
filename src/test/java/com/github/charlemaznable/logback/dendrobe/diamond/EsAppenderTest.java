@@ -26,7 +26,7 @@ import java.util.Properties;
 
 import static com.github.charlemaznable.core.es.EsClientElf.buildElasticsearchClient;
 import static com.github.charlemaznable.core.es.EsClientElf.closeElasticsearchApiClient;
-import static com.github.charlemaznable.es.config.EsConfigElf.ES_CONFIG_DIAMOND_GROUP_NAME;
+import static com.github.charlemaznable.core.es.EsConfigElf.ES_CONFIG_DIAMOND_GROUP_NAME;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Objects.nonNull;
 import static org.awaitility.Awaitility.await;
