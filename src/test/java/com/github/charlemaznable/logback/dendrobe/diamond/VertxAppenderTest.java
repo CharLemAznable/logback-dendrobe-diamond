@@ -23,8 +23,8 @@ import org.slf4j.LoggerFactory;
 import java.time.Duration;
 import java.util.Properties;
 
-import static com.github.charlemaznable.vertx.config.VertxClusterConfigElf.VERTX_CLUSTER_CONFIG_DIAMOND_GROUP_NAME;
-import static com.github.charlemaznable.vertx.config.VertxOptionsConfigElf.VERTX_OPTIONS_DIAMOND_GROUP_NAME;
+import static com.github.charlemaznable.core.vertx.VertxClusterConfigElf.VERTX_CLUSTER_CONFIG_DIAMOND_GROUP_NAME;
+import static com.github.charlemaznable.core.vertx.VertxOptionsConfigElf.VERTX_OPTIONS_DIAMOND_GROUP_NAME;
 import static java.util.Objects.nonNull;
 import static org.awaitility.Awaitility.await;
 import static org.joor.Reflect.on;
@@ -91,7 +91,7 @@ public class VertxAppenderTest implements DiamondUpdaterListener, VertxManagerLi
                 """);
         MockDiamondServer.setConfigInfo(VERTX_OPTIONS_DIAMOND_GROUP_NAME, "DEFAULT", """
                 workerPoolSize=42
-                clusterManager=@com.github.charlemaznable.vertx.config.DiamondHazelcastClusterManager(DEFAULT)
+                clusterManager=@com.github.charlemaznable.core.vertx.cluster.impl.DiamondHazelcastClusterManager(DEFAULT)
                 """);
         MockDiamondServer.updateDiamond("Logback", "test", "" +
                 "root[console.level]=info\n" +
@@ -107,7 +107,7 @@ public class VertxAppenderTest implements DiamondUpdaterListener, VertxManagerLi
         root.info("root vertx log {}", "old");
         self.info("self vertx log {}", "old");
         await().timeout(Duration.ofSeconds(20)).untilAsserted(() ->
-            assertEquals("self vertx log old", lastEventMessage));
+                assertEquals("self vertx log old", lastEventMessage));
 
         VertxManager.removeListener(this);
         DiamondUpdater.removeListener(this);
