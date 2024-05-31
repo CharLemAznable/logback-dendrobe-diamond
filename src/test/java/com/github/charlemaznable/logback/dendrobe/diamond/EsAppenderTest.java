@@ -71,10 +71,8 @@ public class EsAppenderTest implements DiamondUpdaterListener, EsClientManagerLi
         esConfig.setPassword(ELASTICSEARCH_PASSWORD);
         esClient = buildElasticsearchClient(esConfig);
 
-        val createIndexRequest = CreateIndexRequest.of(builder -> builder.index("logback.diamond"));
-        val createIndexResponse = esClient.indices().create(createIndexRequest);
-        val openIndexRequest = OpenRequest.of(builder -> builder.index("logback.diamond"));
-        val openIndexResponse = esClient.indices().open(openIndexRequest);
+        esClient.indices().create(CreateIndexRequest.of(builder -> builder.index("logback.diamond")));
+        esClient.indices().open(OpenRequest.of(builder -> builder.index("logback.diamond")));
 
         await().forever().until(() -> nonNull(
                 DiamondSubscriber.getInstance().getDiamondRemoteChecker()));
