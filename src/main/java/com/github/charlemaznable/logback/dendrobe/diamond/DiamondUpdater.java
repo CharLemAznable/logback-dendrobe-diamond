@@ -11,7 +11,7 @@ import org.n3r.diamond.client.DiamondListener;
 import org.n3r.diamond.client.DiamondStone;
 import org.n3r.diamond.client.Miner;
 import org.n3r.diamond.client.impl.DiamondSubscriber;
-import org.slf4j.helpers.Util;
+import org.slf4j.helpers.Reporter;
 
 import java.util.Properties;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -42,7 +42,7 @@ public final class DiamondUpdater implements HotUpdater, DiamondListener {
                     try {
                         listener.acceptDiamondStoneProperties(properties);
                     } catch (Exception t) {
-                        Util.report("listener error:", t);
+                        Reporter.error("listener error:", t);
                     }
                 }
             }
