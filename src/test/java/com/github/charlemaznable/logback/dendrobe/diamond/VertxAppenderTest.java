@@ -54,8 +54,7 @@ public class VertxAppenderTest implements DiamondUpdaterListener, VertxManagerLi
         vertxOptions.setWorkerPoolSize(10);
         val hazelcastConfig = new Config();
         hazelcastConfig.getNetworkConfig().getJoin().getMulticastConfig().setEnabled(true);
-        vertxOptions.setClusterManager(new HazelcastClusterManager(hazelcastConfig));
-        vertx = VertxElf.buildVertx(vertxOptions);
+        vertx = VertxElf.buildVertx(vertxOptions, new HazelcastClusterManager(hazelcastConfig));
         vertx.eventBus().consumer("logback.diamond",
                 (Handler<Message<JsonObject>>) event -> {
                     try {
